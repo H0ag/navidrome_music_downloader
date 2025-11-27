@@ -1,34 +1,152 @@
-# YouTube downloader for Navidrome
-J'ai fais ce script en Pascal à la fois pour m'entrainer à l'apprentissage de ce language + automatiser le telechargement et le rangement des musiques YouTube pour navidrome, proprement.
+# YouTube Downloader for Navidrome
 
-## Language :
-- [Pascal](https://www.freepascal.org/)
+This project is a small utility written in **Pascal**, created both as a
+learning exercise and as an automated workflow to download music from
+YouTube, clean metadata, and organize files in a structure compatible
+with **Navidrome**.
+
+The script downloads videos or playlists, applies proper ID3 metadata,
+and arranges audio files in a clean `Artist/Album` folder hierarchy.
+
+------------------------------------------------------------------------
+
+## Language
+
+-   **[Pascal (Free Pascal)](https://www.freepascal.org/)**
+
+This script is intended to be compiled with the Free Pascal Compiler
+(FPC).
+
+------------------------------------------------------------------------
+
+## Requirements
+
+Your system must include the following tools:
+
+### yt-dlp
+
+Used to download and extract audio from YouTube.
+
+Download: https://github.com/yt-dlp/yt-dlp/releases/
+
+Example installation (Linux):
+
+``` bash
+sudo install -m 755 yt-dlp /usr/local/bin/yt-dlp
+```
+
+### id3v2
+
+Used to apply ID3 metadata to MP3 files.
+
+Debian/Ubuntu:
+
+``` bash
+sudo apt install id3v2
+```
+
+------------------------------------------------------------------------
 
 ## Compilation
-Pour compiler le script, j'utilise `fpc` (Free Pascal Compiler).
 
-```bash
+Compile the script using **fpc**:
+
+``` bash
 fpc ./main.pas
 ```
-**Execution:**
-```bash
+
+This generates an executable named `main`.
+
+### Execution
+
+``` bash
 ./main
 ```
 
-## Logique
-- Recuperer les infos : 
-    - L'URL de la video/playliste YouTube.
-    - Le nom de l'artiste.
-    - Le nom de l'album.
+------------------------------------------------------------------------
 
-- Creer un repertoire temporaire dans le `/tmp` pour stocker temporairement les musiques
-    - S'il existe pas, il le créer
+## Script Logic
 
-- Ensuite, j'utilise la commande [`yt-dlp`](https://github.com/yt-dlp/yt-dlp/releases/) pour telecharger les videos depuis YouTube.
+### 1. Input Collection
 
-- Sur toutes ces musiques dans le dossier temporaire, j'applique la commande `id3v2` pour changer les metadonnées. J'ajoute :
-    - Nom de l'album
-    - Nom de l'artiste
+The script asks the user for: - The **YouTube URL** (video or
+playlist) - The **Artist Name** - The **Album Name**
 
-- Quand c'est fait, je créer le dossier de l'album. Qui est BASE/ARTISTE/ALBUM
-- Et je deplace toutes ces musiques du dossier temporaire vers ce dossier.
+These inputs are used to name folders and apply metadata.
+
+------------------------------------------------------------------------
+
+### 2. Temporary Directory Creation
+
+A working directory is created in `/tmp`, for example:
+
+    /tmp/navidrome-downloader-XXXX
+
+If the directory already exists, it is reused.
+
+------------------------------------------------------------------------
+
+### 3. Download Audio with yt-dlp
+
+The script uses `yt-dlp` to download audio and convert it to MP3:
+
+``` bash
+yt-dlp -x --audio-format mp3 -o "/tmp/.../%(title)s.%(ext)s" "<URL>"
+```
+
+All downloaded files are stored in the temporary folder.
+
+------------------------------------------------------------------------
+
+### 4. Apply Metadata with id3v2
+
+Each MP3 file in the temporary directory receives proper metadata:
+
+``` bash
+id3v2 --artist "ARTIST" --album "ALBUM" file.mp3
+```
+
+This prevents Navidrome from creating duplicate artists/albums due to
+inconsistent tags.
+
+------------------------------------------------------------------------
+
+### 5. Build the Final Folder Structure
+
+The output path follows:
+
+    BASE_DIRECTORY / ARTIST / ALBUM /
+
+Example:
+
+    /mnt/navidrome/music/WeRenoi/Diamand\ Noir/
+
+Folders are created automatically if missing.
+
+------------------------------------------------------------------------
+
+### 6. Move Processed Files to Final Directory
+
+All MP3 files are moved from `/tmp/...` to the final album directory.\
+The temporary directory can then be removed or left for debugging.
+
+------------------------------------------------------------------------
+
+## Example Folder Layout
+
+    /mnt/navidrome/music/
+    └── WeRenoi/
+        └── Diamand Noir/
+            ├── Poney.mp3
+            ├── First.mp3
+            ├── ...
+
+Metadata ensures correct sorting and display in Navidrome.
+
+------------------------------------------------------------------------
+
+## Notes and Future Improvements
+
+-   Use [`beet`](https://github.com/beetbox/beets/releases/)
+
+------------------------------------------------------------------------
