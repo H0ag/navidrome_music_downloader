@@ -126,7 +126,7 @@ begin
         P.Options := P.Options + [poWaitOnExit];
 
         // Pareil, je dis le nom du programme
-        P.Executable := '/usr/local/bin/id3v2';
+        P.Executable := '/usr/bin/id3v2';
 
         // Mes arguments
         P.Parameters.Add('--album');
