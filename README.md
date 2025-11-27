@@ -45,6 +45,16 @@ Debian/Ubuntu:
 sudo apt install id3v2
 ```
 
+### beet
+
+Used to apply metadata to mp3 files.
+
+Download: https://github.com/beetbox/beets/releases/
+
+```bash
+sudo beet import <MUSIC_FOLDER>
+```
+
 ------------------------------------------------------------------------
 
 ## Compilation
