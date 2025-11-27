@@ -182,4 +182,26 @@ begin
 
         FindClose(SR);
     end;
+
+    {
+        La, je vais utiliser la commande "beet" pour ranger proprement les metadonnées des musiques avec MusicBrainz etc etc
+    }
+    begin
+        // Je creer un process, avec process
+        P := TProcess.Create(nil);
+        P.Options := P.Options + [poWaitOnExit];
+
+        // Pareil, je dis le nom du programme
+        P.Executable := '/usr/local/bin/beet';
+
+        // Mes arguments
+        P.Parameters.Add('import');
+        P.Parameters.Add(MUSIC_DIR); 
+
+        // J'execute
+        P.Execute;
+
+        // Et j'me libere
+        P.Free;
+    end;
 end.
