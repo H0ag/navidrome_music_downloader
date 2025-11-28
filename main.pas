@@ -13,8 +13,6 @@ Uses
 var
     // C'est cette fonction pour executer des programmes
     P: TProcess;
-    // Ca c'est pour manipuler des fichiers
-    SR: TSearchRec;
     
     // Ici j'vais stocker l'URL de la playlist/video youtube
     VIDEO_URL: string;
@@ -33,10 +31,36 @@ var
     // Ici je mettrai le chemin complet de l'album, donc le MUSIC_DIR + ARTIST + ALBUM
     ALBUM_DIR: string ;
 
-// procedure Execute(params);
-// begin
-    
-// end;
+
+{
+    Ceci est une sorte de fonction. Je la creer pour deplacer des fichiers d'un repertoire à un autre.
+    Pour appeler cette fonction je dois donner 2 variables. La source et la Destination. (Des chaines de caracteres type const)
+}
+procedure MoveMP3s(const SrcDir, DestDir: string);
+    {
+        Comme plus haut, quand je fais une fonction, je definis ls variables que je vais utiliser dedans.
+    }
+    var
+        // C'est pour manipuler les fichiers.
+        SR: TSearchRec;
+        SrcFile, DestFile: string;
+    begin
+        if FindFirst(SrcDir + DirectorySeparator + '*.mp3', faAnyFile, SR) = 0 then
+            begin
+                repeat
+                // Ignore "." et ".."
+                if (SR.Name <> '.') and (SR.Name <> '..') then
+                    begin
+                        SrcFile := SrcDir + DirectorySeparator + SR.Name;
+                        DestFile := DestDir + DirectorySeparator + SR.Name;
+
+                        if not RenameFile(SrcFile, DestFile) then
+                        writeln('Failed to move: ', SrcFile);
+                    end;
+                    until FindNext(SR) <> 0;
+                    FindClose(SR);
+            end;
+    end;
 
 {
     En Pascal, le code principal se fait dans ces balises begin/end. C'est une sorte de bloc.
@@ -168,19 +192,8 @@ begin
         Visiblement en Pascal ya pas de fonction directe pour ca, faut les sorte de renommer.
     }
     begin
-        // Je prend "*" dans le repertoire temporaire
-        if FindFirst(TMP_DIR + '*.mp3', faAnyFile, SR) = 0 then
-            // Et pour tous... :
-            repeat
-                if (SR.Name <> '.') and (SR.Name <> '..') then
-                    // Je recomme ce fichier, en changeant le chemin vers le chemin de l'album
-                    RenameFile(
-                        TMP_DIR + SR.Name,
-                        ALBUM_DIR + DirectorySeparator + SR.Name
-                    );
-            until FindNext(SR) <> 0;
-
-        FindClose(SR);
+        // J'appelle ma fonction plus haut pour deplacer mes fichiers. Je precise la source et la destination
+        MoveMP3s(TMP_DIR, ALBUM_DIR);
     end;
 
     {
