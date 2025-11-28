@@ -71,7 +71,7 @@ begin
     // S'il n'existe pas, on le creer
     // Ca utilise les fonction sysutils je crois
     if not DirectoryExists(TMP_DIR) then
-        if not CreateDir(TMP_DIR) then
+        if not ForceDirectories(TMP_DIR) then
             writeln('Failed to create directory ! ',TMP_DIR)
         else
             writeln('Created "',TMP_DIR,'" directory');
@@ -155,7 +155,7 @@ begin
 
     // S'il n'existe pas, on le creer
     if not DirectoryExists(ALBUM_DIR) then
-        if not CreateDir(ALBUM_DIR) then
+        if not ForceDirectories(ALBUM_DIR) then
             writeln('Failed to create directory ! ',ALBUM_DIR)
         else
             writeln('Created "',ALBUM_DIR,'" directory');
@@ -169,7 +169,7 @@ begin
     }
     begin
         // Je prend "*" dans le repertoire temporaire
-        if FindFirst(TMP_DIR + '*', faAnyFile, SR) = 0 then
+        if FindFirst(TMP_DIR + '*.mp3', faAnyFile, SR) = 0 then
             // Et pour tous... :
             repeat
                 if (SR.Name <> '.') and (SR.Name <> '..') then
