@@ -51,8 +51,8 @@ procedure MoveMP3s(const SrcDir, DestDir: string);
                 // Ignore "." et ".."
                 if (SR.Name <> '.') and (SR.Name <> '..') then
                     begin
-                        SrcFile := SrcDir + DirectorySeparator + SR.Name;
-                        DestFile := DestDir + DirectorySeparator + SR.Name;
+                        SrcFile := SrcDir + SR.Name;
+                        DestFile := DestDir + SR.Name;
 
                         if not RenameFile(SrcFile, DestFile) then
                         writeln('Failed to move: ', SrcFile);
@@ -175,7 +175,7 @@ begin
     }
     // Definir son nom :
     // J'crois que DirectorySeparator c'est une fonction pascal directe pour foutre un "/"
-    ALBUM_DIR := MUSIC_DIR+ARTIST_NAME+DirectorySeparator+ALBUM_TITLE;
+    ALBUM_DIR := MUSIC_DIR+ARTIST_NAME+DirectorySeparator+ALBUM_TITLE+DirectorySeparator;
 
     // S'il n'existe pas, on le creer
     if not DirectoryExists(ALBUM_DIR) then
