@@ -36,41 +36,31 @@ var
     Ceci est une sorte de fonction. Je la creer pour deplacer des fichiers d'un repertoire à un autre.
     Pour appeler cette fonction je dois donner 2 variables. La source et la Destination. (Des chaines de caracteres type const)
 }
-procedure MoveMP3s(const SrcDir, DestDir: string);
-    {
-        Comme plus haut, quand je fais une fonction, je definis ls variables que je vais utiliser dedans.
-    }
-    var
-        // C'est pour manipuler les fichiers.
-        SR: TSearchRec;
-        SrcFile, DestFile: string;
-    begin
-        if FindFirst(SrcDir + DirectorySeparator + '*.mp3', faAnyFile, SR) = 0 then
-            begin
-                repeat
-                // Ignore "." et ".."
-                if (SR.Name <> '.') and (SR.Name <> '..') then
-                    begin
-                        SrcFile := SrcDir + SR.Name;
-                        DestFile := DestDir + SR.Name;
+// procedure MoveMP3s(const SrcDir, DestDir: string);
+//     {
+//         Comme plus haut, quand je fais une fonction, je definis ls variables que je vais utiliser dedans.
+//     }
+//     var
+//         // C'est pour manipuler les fichiers.
+//         SR: TSearchRec;
+//         SrcFile, DestFile: string;
+//     begin
+//         if FindFirst(SrcDir + DirectorySeparator + '*.mp3', faAnyFile, SR) = 0 then
+//             begin
+//                 repeat
+//                 // Ignore "." et ".."
+//                 if (SR.Name <> '.') and (SR.Name <> '..') then
+//                     begin
+//                         SrcFile := SrcDir + SR.Name;
+//                         DestFile := DestDir + SR.Name;
 
-                        // Tentative move direct
-                        if not RenameFile(SrcFile, DestFile) then
-                        begin
-                            // Si move impossible -> copie + suppression
-                            if CopyFile(SrcFile, DestFile) then
-                                begin
-                                    if not DeleteFile(SrcFile) then
-                                    writeln('Failed to delete src after copy: ', SrcFile, ' | Error: ', SysErrorMessage(GetLastOSError()));
-                                end
-                                else
-                                    writeln('Failed to copy: ', SrcFile, ' -> ', DestFile, ' | Error: ', SysErrorMessage(GetLastOSError()));
-                        end;
-                    end;
-                    until FindNext(SR) <> 0;
-                    FindClose(SR);
-            end;
-    end;
+//                         if not RenameFile(SrcFile, DestFile) then
+//                             writeln('Failed to move: ', SrcFile, ' -> ', DestFile, ' | Error: ', SysErrorMessage(GetLastOSError()));
+//                     end;
+//                     until FindNext(SR) <> 0;
+//                     FindClose(SR);
+//             end;
+//     end;
 
 {
     En Pascal, le code principal se fait dans ces balises begin/end. C'est une sorte de bloc.
@@ -98,17 +88,22 @@ begin
     {
         Je créer d'abord un repertoire temporaire pour stocker les fichiers de youtube avant de les replacer.
     }
-    // Creer le directory temporaire
+    // // Creer le directory temporaire
+    // // Definir son nom :
+    // TMP_DIR := '/tmp/navidrome_tmp_dl/';
+
     // Definir son nom :
-    TMP_DIR := '/tmp/navidrome_tmp_dl/';
+    // J'crois que DirectorySeparator c'est une fonction pascal directe pour foutre un "/"
+    ALBUM_DIR := MUSIC_DIR+ARTIST_NAME+DirectorySeparator+ALBUM_TITLE+DirectorySeparator;
+
 
     // S'il n'existe pas, on le creer
     // Ca utilise les fonction sysutils je crois
-    if not DirectoryExists(TMP_DIR) then
-        if not ForceDirectories(TMP_DIR) then
-            writeln('Failed to create directory ! ',TMP_DIR)
+    if not DirectoryExists(ALBUM_DIR) then
+        if not ForceDirectories(ALBUM_DIR) then
+            writeln('Failed to create directory ! ',ALBUM_DIR)
         else
-            writeln('Created "',TMP_DIR,'" directory');
+            writeln('Created "',ALBUM_DIR,'" directory');
 
     // Executer la commande systeme 'yt-dlp'
     begin
@@ -137,7 +132,7 @@ begin
 
         P.Parameters.Add('-o');
         // la j'lui dis le chemin de output c'est le TMP_DIR avec le blaze du son
-        P.Parameters.Add(TMP_DIR + '%(playlist_index)02d - %(artist)s - %(title)s.%(ext)s');
+        P.Parameters.Add(ALBUM_DIR + '%(playlist_index)02d - %(artist)s - %(title)s.%(ext)s');
 
         P.Parameters.Add(VIDEO_URL);
 
@@ -167,7 +162,7 @@ begin
         P.Parameters.Add(ALBUM_TITLE); 
         P.Parameters.Add('--artist');
         P.Parameters.Add(ARTIST_NAME);
-        P.Parameters.Add(TMP_DIR+'*');
+        P.Parameters.Add(ALBUM_DIR+'*');
 
         // J'execute
         P.Execute;
@@ -183,16 +178,12 @@ begin
 
         Avec ce chemin la, je vais pouvoir ranger proprement mes musiques sur navidrome.
     }
-    // Definir son nom :
-    // J'crois que DirectorySeparator c'est une fonction pascal directe pour foutre un "/"
-    ALBUM_DIR := MUSIC_DIR+ARTIST_NAME+DirectorySeparator+ALBUM_TITLE+DirectorySeparator;
-
-    // S'il n'existe pas, on le creer
-    if not DirectoryExists(ALBUM_DIR) then
-        if not ForceDirectories(ALBUM_DIR) then
-            writeln('Failed to create directory ! ',ALBUM_DIR)
-        else
-            writeln('Created "',ALBUM_DIR,'" directory');
+    // // S'il n'existe pas, on le creer
+    // if not DirectoryExists(ALBUM_DIR) then
+    //     if not ForceDirectories(ALBUM_DIR) then
+    //         writeln('Failed to create directory ! ',ALBUM_DIR)
+    //     else
+    //         writeln('Created "',ALBUM_DIR,'" directory');
 
 
     {
@@ -201,10 +192,10 @@ begin
 
         Visiblement en Pascal ya pas de fonction directe pour ca, faut les sorte de renommer.
     }
-    begin
-        // J'appelle ma fonction plus haut pour deplacer mes fichiers. Je precise la source et la destination
-        MoveMP3s(TMP_DIR, ALBUM_DIR);
-    end;
+    // begin
+    //     // J'appelle ma fonction plus haut pour deplacer mes fichiers. Je precise la source et la destination
+    //     MoveMP3s(TMP_DIR, ALBUM_DIR);
+    // end;
 
     {
         La, je vais utiliser la commande "beet" pour ranger proprement les metadonnées des musiques avec MusicBrainz etc etc
