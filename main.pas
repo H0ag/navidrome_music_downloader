@@ -54,8 +54,18 @@ procedure MoveMP3s(const SrcDir, DestDir: string);
                         SrcFile := SrcDir + SR.Name;
                         DestFile := DestDir + SR.Name;
 
+                        // Tentative move direct
                         if not RenameFile(SrcFile, DestFile) then
-                            writeln('Failed to move: ', SrcFile, ' -> ', DestFile, ' | Error: ', SysErrorMessage(GetLastOSError()));
+                        begin
+                            // Si move impossible -> copie + suppression
+                            if CopyFile(SrcFile, DestFile) then
+                                begin
+                                    if not DeleteFile(SrcFile) then
+                                    writeln('Failed to delete src after copy: ', SrcFile, ' | Error: ', SysErrorMessage(GetLastOSError()));
+                                end
+                                else
+                                    writeln('Failed to copy: ', SrcFile, ' -> ', DestFile, ' | Error: ', SysErrorMessage(GetLastOSError()));
+                        end;
                     end;
                     until FindNext(SR) <> 0;
                     FindClose(SR);
