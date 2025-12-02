@@ -33,36 +33,6 @@ var
 
 
 {
-    Ceci est une sorte de fonction. Je la creer pour deplacer des fichiers d'un repertoire à un autre.
-    Pour appeler cette fonction je dois donner 2 variables. La source et la Destination. (Des chaines de caracteres type const)
-}
-// procedure MoveMP3s(const SrcDir, DestDir: string);
-//     {
-//         Comme plus haut, quand je fais une fonction, je definis ls variables que je vais utiliser dedans.
-//     }
-//     var
-//         // C'est pour manipuler les fichiers.
-//         SR: TSearchRec;
-//         SrcFile, DestFile: string;
-//     begin
-//         if FindFirst(SrcDir + DirectorySeparator + '*.mp3', faAnyFile, SR) = 0 then
-//             begin
-//                 repeat
-//                 // Ignore "." et ".."
-//                 if (SR.Name <> '.') and (SR.Name <> '..') then
-//                     begin
-//                         SrcFile := SrcDir + SR.Name;
-//                         DestFile := DestDir + SR.Name;
-
-//                         if not RenameFile(SrcFile, DestFile) then
-//                             writeln('Failed to move: ', SrcFile, ' -> ', DestFile, ' | Error: ', SysErrorMessage(GetLastOSError()));
-//                     end;
-//                     until FindNext(SR) <> 0;
-//                     FindClose(SR);
-//             end;
-//     end;
-
-{
     En Pascal, le code principal se fait dans ces balises begin/end. C'est une sorte de bloc.
     Le end du code principal doit finit par "." mais les autres blocs dedans c'est ";".
 }
@@ -85,13 +55,13 @@ begin
     readln(ALBUM_TITLE);
 
 
+    // Creer le directory de l'album
     {
-        Je créer d'abord un repertoire temporaire pour stocker les fichiers de youtube avant de les replacer.
-    }
-    // // Creer le directory temporaire
-    // // Definir son nom :
-    // TMP_DIR := '/tmp/navidrome_tmp_dl/';
+        Ok, ici je vais mettre le contenu de la variable ALBUM_DIR.
+        C'est MUSIC_DIR + le nom de l'artiste + Le nom de l'album
 
+        Avec ce chemin la, je vais pouvoir ranger proprement mes musiques sur navidrome.
+    }
     // Definir son nom :
     // J'crois que DirectorySeparator c'est une fonction pascal directe pour foutre un "/"
     ALBUM_DIR := MUSIC_DIR+ARTIST_NAME+DirectorySeparator+ALBUM_TITLE+DirectorySeparator;
@@ -168,32 +138,6 @@ begin
         // Et j'me libere
         P.Free;
     end;
-
-    // Creer le directory de l'album
-    {
-        Ok, ici je vais mettre le contenu de la variable ALBUM_DIR.
-        C'est MUSIC_DIR + le nom de l'artiste + Le nom de l'album
-
-        Avec ce chemin la, je vais pouvoir ranger proprement mes musiques sur navidrome.
-    }
-    // // S'il n'existe pas, on le creer
-    // if not DirectoryExists(ALBUM_DIR) then
-    //     if not ForceDirectories(ALBUM_DIR) then
-    //         writeln('Failed to create directory ! ',ALBUM_DIR)
-    //     else
-    //         writeln('Created "',ALBUM_DIR,'" directory');
-
-
-    {
-        La, je vais déplacer tout les fichier.mp3 qui sont dans le repertoire temporaire,
-        dans le dossier de l'album que j'ai créé.
-
-        Visiblement en Pascal ya pas de fonction directe pour ca, faut les sorte de renommer.
-    }
-    // begin
-    //     // J'appelle ma fonction plus haut pour deplacer mes fichiers. Je precise la source et la destination
-    //     MoveMP3s(TMP_DIR, ALBUM_DIR);
-    // end;
 
     {
         La, je vais utiliser la commande "beet" pour ranger proprement les metadonnées des musiques avec MusicBrainz etc etc
