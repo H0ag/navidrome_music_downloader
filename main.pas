@@ -123,8 +123,6 @@ begin
         P.Parameters.Add('--embed-metadata');
         P.Parameters.Add('--add-metadata');
         P.Parameters.Add('--embed-thumbnail');
-        P.Parameters.Add('--write-subs');
-        P.Parameters.Add('--write-thumbnail');
 
         P.Parameters.Add('--user-agent');
         // BAM, t'a vu c'est la que je fou la variable useragent
