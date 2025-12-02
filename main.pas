@@ -55,7 +55,7 @@ procedure MoveMP3s(const SrcDir, DestDir: string);
                         DestFile := DestDir + SR.Name;
 
                         if not RenameFile(SrcFile, DestFile) then
-                        writeln('Failed to move: ', SrcFile);
+                            writeln('Failed to move: ', SrcFile, ' -> ', DestFile, ' | Error: ', SysErrorMessage(GetLastOSError()));
                     end;
                     until FindNext(SR) <> 0;
                     FindClose(SR);
