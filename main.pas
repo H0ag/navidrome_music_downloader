@@ -152,7 +152,7 @@ begin
 
         // Mes arguments
         P.Parameters.Add('import');
-        P.Parameters.Add(MUSIC_DIR); 
+        P.Parameters.Add(ALBUM_DIR); 
 
         // J'execute
         P.Execute;
